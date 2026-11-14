@@ -37,8 +37,8 @@ export function SiteProvider({ children }: { children: React.ReactNode }) {
         setSiteInfo({
           basic: {
             title: 'NavSphere Peiqi',
-            description: 'A modern navigation platform',
-            keywords: 'navigation, platform, web, management'
+            description: 'NavSphere Peiqi — 基于 Cloudflare KV 的自托管导航站，后台修改实时生效，无需重新部署。',
+            keywords: 'NavSphere Peiqi,导航,自托管,Cloudflare,KV,个人导航,网址收藏,网站导航'
           },
           appearance: {
             logo: '/logo.png',

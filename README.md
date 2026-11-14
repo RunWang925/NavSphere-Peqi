@@ -4,17 +4,33 @@
 
 ## 🚀 快速部署
 
-1. Fork 本仓库到你的 GitHub
-2. 进入 [Cloudflare Dashboard](https://dash.cloudflare.com) → Workers & Pages → 创建应用程序 → **Pages** → 连接到 Git → 选这个仓库
-3. 构建命令填 `npx @cloudflare/next-on-pages@1`，输出目录填 `.vercel/output/static`
-4. 部署完成后，在项目设置中配置以下内容：
+**1. Fork 本仓库** 到你的 GitHub
 
-**绑定 KV 命名空间**
-- 变量名：`NAV_KV`
-- 作用：存储导航数据和站点配置，后台修改的数据都存在这里
-- 不绑定：只能用默认数据做演示，无法在后台修改
+**2. 创建 Pages 项目**：进入 [Cloudflare Dashboard](https://dash.cloudflare.com) → Workers & Pages → 创建应用程序 → **Pages** → 连接到 Git → 选这个仓库
 
-**设置环境变量（都是可选的）**
+**3. 设置构建命令和输出目录**
+
+![构建设置](docs/deploy-build-settings.png)
+
+构建命令填 `npx @cloudflare/next-on-pages@1`，输出目录填 `.vercel/output/static`
+
+**4. 创建 KV 命名空间**：左侧菜单 → 存储和数据库 → Workers KV → 创建 KV 命名空间
+
+![创建KV](docs/deploy-create-kv.png)
+
+命名空间名称随便填，比如 `NavSphere-Peqi-KV`，数据位置选"标准"即可
+
+**5. 绑定 KV 到 Pages 项目**：部署完成后 → 进入项目设置 → 绑定 → 添加 KV 命名空间绑定
+
+![绑定KV](docs/deploy-bind-kv.png)
+
+- 变量名填 `NAV_KV`
+- KV 命名空间选刚才创建的
+- 保存后重新部署生效
+
+> 不绑定 KV 只能用默认数据做演示，无法在后台修改
+
+**6. 设置环境变量（可选）**：在项目设置 → 环境变量中添加
 - `ADMIN_PASSWORD`：管理员密码，不设默认 `admin`，登录后可在后台修改
 - `SESSION_SECRET`：会话密钥，不设也能用（有默认值），想更安全可以自己填一串随机字符
 

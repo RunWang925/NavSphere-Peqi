@@ -184,3 +184,12 @@ export async function setAdminPassword(password: string): Promise<void> {
   }
   await env.NAV_KV.put('admin_password', password)
 }
+export async function isPasswordInitialized(): Promise<boolean> {
+  const env = await getEnv()
+  if (env?.NAV_KV) {
+    const stored = await env.NAV_KV.get('admin_password', 'text')
+    if (stored) return true
+  }
+  if (env?.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD) return true
+  return false
+}

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     default: 'NavSphere Peiqi',
     template: '%s - NavSphere Peiqi'
   },
-  description: 'A modern navigation platform',
+  description: 'NavSphere Peiqi — 基于 Cloudflare KV 的自托管导航站，后台修改实时生效，无需重新部署。',
   icons: {
     icon: '/assets/images/logo.png',
     apple: '/assets/images/logo.png',

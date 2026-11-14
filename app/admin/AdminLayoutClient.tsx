@@ -96,13 +96,52 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
   const { setTheme } = useTheme()
   const [kvAvailable, setKvAvailable] = useState<boolean | null>(null)
   const [platform, setPlatform] = useState<string>('unknown')
+  const [needPasswordChange, setNeedPasswordChange] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [changingPassword, setChangingPassword] = useState(false)
 
   useEffect(() => {
     fetch('/api/system/status').then(res => res.json()).then(data => {
       setKvAvailable(data.kvAvailable)
       setPlatform(data.platform || 'unknown')
     }).catch(() => {})
+    fetch('/api/auth/check-password').then(res => res.json()).then(data => {
+      if (data.initialized === false) {
+        setNeedPasswordChange(true)
+      }
+    }).catch(() => {})
   }, [])
+
+  const handleForceChangePassword = async () => {
+    setPasswordError('')
+    if (!newPassword || newPassword.length < 3) {
+      setPasswordError('新密码至少 3 个字符')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('两次密码不一致')
+      return
+    }
+    setChangingPassword(true)
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: 'admin', newPassword })
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setPasswordError(data.error || '修改失败')
+      } else {
+        setNeedPasswordChange(false)
+      }
+    } catch {
+      setPasswordError('网络错误')
+    }
+    setChangingPassword(false)
+  }
 
   const kvTips: Record<string, { title: string; desc: string }> = {
     cloudflare: {
@@ -142,6 +181,7 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
   }
 
   return (
+    <>
     <div className="hidden md:block h-screen">
       <div className="h-full border-t">
         <div className="h-full bg-background">
@@ -191,7 +231,7 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
                           {!isSidebarCollapsed && (
                             <div className="flex flex-col">
                               <span className="text-lg font-semibold leading-none tracking-tight">
-                                NavHub
+                                NavSphere Peiqi
                               </span>
                               <span className="text-xs text-muted-foreground mt-1">
                                 管理控制台
@@ -393,5 +433,38 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
         </div>
       </div>
     </div>
+    {needPasswordChange && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+        <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+          <h2 className="text-xl font-bold mb-2">⚠️ 首次登录请修改密码</h2>
+          <p className="text-sm text-muted-foreground mb-4">默认密码 admin 不安全，请设置新密码后才能使用后台</p>
+          <div className="space-y-3">
+            <input
+              type="password"
+              placeholder="新密码"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md bg-background"
+            />
+            <input
+              type="password"
+              placeholder="确认新密码"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md bg-background"
+            />
+            {passwordError && <p className="text-sm text-red-500">{passwordError}</p>}
+            <Button
+              className="w-full"
+              onClick={handleForceChangePassword}
+              disabled={changingPassword}
+            >
+              {changingPassword ? '修改中...' : '确认修改'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 } 
