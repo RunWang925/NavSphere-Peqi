@@ -1,95 +1,45 @@
-# NavSphere-KV
+# NavSphere Peiqi 导航
 
-一个自托管导航站，数据存在 Cloudflare KV，改数据不用重新部署，fork 即用。
+基于 NavSphere 二次开发的自托管导航站，使用 Cloudflare KV 存储数据，后台修改数据实时生效，无需重新部署。
 
-> **部署到 Cloudflare Pages**：fork 本仓库 → Cloudflare Dashboard → Workers & Pages → 创建应用程序 → **Pages** → 连接到 Git → 选这个仓库
->
-> 构建命令 `npx @cloudflare/next-on-pages@1`，输出目录 `.vercel/output/static`，详细步骤见 [DEPLOY.md](./DEPLOY.md)
+## � 快速部署
 
----
+点击下方按钮，自动跳转到 Cloudflare Pages 部署页面：
 
-## 原理说明
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/RunWang925/NavSphere-Peqi)
 
-### 数据存储：为什么改数据不用重新部署？
+部署后需要配置以下内容：
 
-传统做法是把导航数据写成 JSON 文件放进项目里，每次改数据都要重新构建部署。
+**1. 绑定 KV 命名空间**
+- 变量名：`NAV_KV`
+- 作用：存储导航数据和站点配置，后台修改的数据都存在这里
+- 不绑定：只能用默认数据做演示，无法在后台修改
 
-本项目的做法：导航数据存在 **Cloudflare KV**（一个云端键值数据库）里。前台每次打开页面时，直接从 KV 实时读取数据。你在后台改了数据 → 写进 KV → 前台刷新就能看到，**全程不用重新部署**。
+**2. 设置环境变量（都是可选的）**
+- `ADMIN_PASSWORD`：管理员密码，不设默认 `admin`，登录后可在后台修改
+- `SESSION_SECRET`：会话密钥，不设也能用（有默认值），想更安全可以自己填一串随机字符
 
-### 图片存储：KV 够用，R2 更好
+> 详细步骤见 [DEPLOY.md](./DEPLOY.md)
 
-- **大部分图标**：直接用网站自带的 favicon URL，不占任何存储。
-- **手动上传的图片**：默认存 KV（单张上限 25MB，图标绰绰有余）。
-- **配了 R2**（可选）：图片自动走 R2 对象存储（免费 10GB/月，更适合大量图片）。
+## ✨ 和原项目的区别
 
-不配 R2 也完全能用，fork 即可部署。
-
-**KV vs R2 对比**：
-
-| | KV | R2 |
-|---|---|---|
-| 适合 | 文字数据 + 小图片 | 大量自定义图片 |
-| 单值上限 | 25MB | 5TB |
-| 开通条件 | 无需信用卡 | 需绑信用卡 |
-| 定位 | 必需 | 可选冗余 |
-
-**日常推荐**：只绑 KV 就够用。大量图片建议用自己的图床（URL 方式，零存储），R2 适合没图床但需要传很多图片的场景。
-
-### 登录：密码，不需要 GitHub 账号
-
-后台用密码登录，不依赖 GitHub OAuth。
-- **不设任何变量**：默认密码 `admin`，fork 即用
-- **设了 `ADMIN_PASSWORD`**：用你设的密码
-- **后台可改密码**：登录后右上角菜单 → 修改密码，存进 KV 永久生效
-
-### 为什么 fork 即用？
-
-本项目**完全不依赖 GitHub 仓库做存储**——数据在 KV、图片在 KV/R2、登录用密码。fork 仓库后只需要：
-1. 绑一个 KV（必需）
-2. 设一个密码（必需）
-3. 绑一个 R2（可选）
-
-就能跑起来，不需要任何 GitHub Token 或仓库权限。
-
-> **不设密码也能用**——默认密码 `admin`，登录后可在后台修改。
-> **不绑 R2 也完全能用**——很多人无法开通 R2（需绑信用卡），图片走 KV 完全够用。
-
----
-
-## 快速开始
-
-### 本地开发
-
-```bash
-pnpm install
-cp .env.example .env
-# 编辑 .env 设置 ADMIN_PASSWORD 和 SESSION_SECRET
-pnpm dev
-```
-
-打开 http://localhost:3000 ，后台在 http://localhost:3000/admin
-
-### 部署到 Cloudflare
-
-详细步骤见 [DEPLOY.md](./DEPLOY.md)，简单说就是：
-
-1. Fork 仓库到你的 GitHub
-2. 在 Cloudflare Pages 连接这个仓库
-3. 绑定 KV（变量名 `NAV_KV`）
-4. 设置环境变量 `SESSION_SECRET`（`ADMIN_PASSWORD` 可选，不设默认 `admin`）
-5. 部署
-
-构建命令：`npx @cloudflare/next-on-pages@1`
-输出目录：`.vercel/output/static`
-
----
-
-## 和原项目 (NavSphere) 的区别
+原项目数据存在 GitHub 仓库文件里，改网址要重新部署；后台需要 GitHub 授权登录，比较麻烦。本项目针对这些痛点做了改进：
 
 | | 原项目 | 本项目 |
 |---|---|---|
 | 数据存储 | GitHub 仓库文件 | Cloudflare KV |
-| 图片存储 | GitHub 仓库 | KV / R2 |
-| 登录 | GitHub OAuth | 密码 |
-| 改数据要重新部署？ | 要 | **不要** |
+| 改数据要重新部署？ | 要，等几分钟 | **不要，秒级生效** |
+| 登录方式 | GitHub OAuth 授权 | 密码登录 |
 | fork 能直接部署？ | 不能 | **能** |
+
+适合经常修改或新增网址链接的人。
+
+## � 致谢
+
+本项目基于原作者 [tianyaxiang](https://github.com/tianyaxiang) 的 [NavSphere](https://github.com/tianyaxiang/NavSphere) 项目修改而来，感谢原作者的开源贡献！
+
+> 觉得有帮助的话，欢迎去 [原作者仓库](https://github.com/tianyaxiang/NavSphere) 点个 ⭐ Star
+
+## 📄 License
+
+同原项目 License
