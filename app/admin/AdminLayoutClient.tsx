@@ -106,10 +106,12 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
     fetch('/api/system/status').then(res => res.json()).then(data => {
       setKvAvailable(data.kvAvailable)
       setPlatform(data.platform || 'unknown')
-    }).catch(() => {})
-    fetch('/api/auth/check-password').then(res => res.json()).then(data => {
-      if (data.initialized === false) {
-        setNeedPasswordChange(true)
+      if (data.kvAvailable) {
+        fetch('/api/auth/check-password').then(res => res.json()).then(data => {
+          if (data.initialized === false) {
+            setNeedPasswordChange(true)
+          }
+        }).catch(() => {})
       }
     }).catch(() => {})
   }, [])
