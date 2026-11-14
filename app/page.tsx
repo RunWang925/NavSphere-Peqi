@@ -8,7 +8,7 @@ import { getNavigationCached, getSiteCached } from '@/lib/kv'
 import navigationFallback from '@/navsphere/content/navigation.json'
 import siteFallback from '@/navsphere/content/site.json'
 
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 async function getData() {
@@ -92,12 +92,25 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const { navigationData, siteData } = await getData()
+  try {
+    const { navigationData, siteData } = await getData()
 
-  return (
-    <Container>
-      <NavigationContent navigationData={navigationData} siteData={siteData} />
-      <ScrollToTop />
-    </Container>
-  )
+    return (
+      <Container>
+        <NavigationContent navigationData={navigationData} siteData={siteData} />
+        <ScrollToTop />
+      </Container>
+    )
+  } catch (e: any) {
+    return (
+      <div style={{ padding: 40, fontFamily: 'monospace', fontSize: 14 }}>
+        <h2>Page Error</h2>
+        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+          {e?.message || String(e)}
+          {'\n\n'}
+          {e?.stack || ''}
+        </pre>
+      </div>
+    )
+  }
 }

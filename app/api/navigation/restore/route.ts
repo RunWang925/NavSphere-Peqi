@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { restoreNavigation, getDefaultNavigation } from '@/lib/kv'
 
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 export async function POST() {
   try {

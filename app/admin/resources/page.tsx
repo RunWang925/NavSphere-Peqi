@@ -1,6 +1,6 @@
 'use client'
 
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"

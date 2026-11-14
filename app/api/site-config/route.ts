@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { SiteConfig } from '@/types/site'
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 const defaultConfig: SiteConfig = {
   basic: {

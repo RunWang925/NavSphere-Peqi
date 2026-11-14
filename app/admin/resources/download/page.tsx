@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 const FaviconDownloader: React.FC = () => {
     const [url, setUrl] = useState('');

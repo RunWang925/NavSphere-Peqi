@@ -4,7 +4,7 @@ import { getResource, saveResource } from '@/lib/kv'
 import { saveAsset, deleteAsset } from '@/lib/asset-storage'
 import type { ResourceMetadata } from '@/types/resource-metadata'
 
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 export async function GET() {
     try {

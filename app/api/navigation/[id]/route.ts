@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { getNavigation, saveNavigation } from '@/lib/kv'
 import type { NavigationData, NavigationItem } from '@/types/navigation'
 
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 export async function GET(
   request: Request,

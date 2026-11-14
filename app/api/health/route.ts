@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 export async function GET() {
   return NextResponse.json({ 

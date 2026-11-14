@@ -1,5 +1,5 @@
 'use client'
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 import * as React from "react"
 import { useState, useEffect } from 'react'

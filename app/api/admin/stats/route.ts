@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getNavigation } from '@/lib/kv'
 import { NavigationCategory } from '@/types/navigation'
-export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
+export const runtime = 'edge'
 
 export async function GET() {
   try {
