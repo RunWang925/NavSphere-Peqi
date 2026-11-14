@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSiteCached } from '@/lib/kv'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 export async function GET() {
   try {

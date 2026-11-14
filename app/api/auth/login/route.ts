@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
 import { getAdminPassword } from '@/lib/kv'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 export async function POST(request: Request) {
   try {

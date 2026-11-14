@@ -1,6 +1,6 @@
 'use client'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 interface WebsiteMetadata {
     title: string

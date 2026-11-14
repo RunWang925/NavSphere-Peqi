@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getEnv } from '@/lib/kv'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 function detectPlatform(): string {
   if (process.env.CF_PAGES === '1') return 'cloudflare'

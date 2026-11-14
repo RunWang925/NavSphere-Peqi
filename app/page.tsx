@@ -8,7 +8,7 @@ import { getNavigationCached, getSiteCached } from '@/lib/kv'
 import navigationFallback from '@/navsphere/content/navigation.json'
 import siteFallback from '@/navsphere/content/site.json'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 export const dynamic = 'force-dynamic'
 
 async function getData() {

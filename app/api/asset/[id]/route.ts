@@ -1,6 +1,6 @@
 import { getAsset } from '@/lib/asset-storage'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 export async function GET(
   _request: Request,

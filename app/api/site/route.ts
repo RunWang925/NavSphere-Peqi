@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { getSite, saveSite } from '@/lib/kv'
 import type { SiteInfo } from '@/types/site'
 
-export const runtime = 'edge'
+export const runtime = process.env.CF_PAGES === '1' ? 'edge' : 'nodejs'
 
 export async function GET() {
   try {
