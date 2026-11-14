@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Docker 部署支持
-  output: 'standalone',
+  // Docker 部署时设 DOCKER_BUILD=1 启用 standalone，EdgeOne/Vercel 等平台不需要
+  ...(process.env.DOCKER_BUILD === '1' ? { output: 'standalone' } : {}),
 
   images: {
     domains: [
