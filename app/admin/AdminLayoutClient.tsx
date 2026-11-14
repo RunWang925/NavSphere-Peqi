@@ -181,11 +181,11 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
                           "flex items-center gap-2",
                           isSidebarCollapsed && "flex-col"
                         )}>
-                          <div className="relative w-8 h-8 overflow-hidden rounded-md">
+                          <div className="relative w-10 h-10">
                             <img
                               src="/assets/images/alogo.webp"
                               alt="Logo"
-                              className="object-cover"
+                              className="object-contain w-full h-full"
                             />
                           </div>
                           {!isSidebarCollapsed && (

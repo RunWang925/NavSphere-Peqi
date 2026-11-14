@@ -200,7 +200,7 @@ export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, his
           )}
 
           <button
-            className="h-8 w-8 flex items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+            className="h-8 w-8 flex items-center justify-center rounded-full border border-border/60 text-foreground hover:bg-muted hover:border-border transition-colors"
             onClick={doSearch}
             title="搜索"
           >

@@ -14,7 +14,7 @@ export function MainNav({
       <Link href="/admin" className="flex items-center space-x-2">
         <Image
           src="/assets/images/alogo.webp"
-          alt="NavHub"
+          alt="Logo"
           width={120}
           height={40}
           className="h-8 w-auto"
