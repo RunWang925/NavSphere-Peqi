@@ -62,7 +62,7 @@ async function getData() {
     navigationData: filteredNavigationData || { navigationItems: [] },
     siteData: siteData || {
       basic: {
-        title: 'NavSphere',
+        title: 'NavSphere Peiqi',
         description: '',
         keywords: ''
       },

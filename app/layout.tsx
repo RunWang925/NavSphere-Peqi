@@ -16,8 +16,8 @@ const inter = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'NavSphere',
-    template: '%s - NavSphere'
+    default: 'NavSphere Peiqi',
+    template: '%s - NavSphere Peiqi'
   },
   description: 'A modern navigation platform',
   icons: {
