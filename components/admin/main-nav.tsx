@@ -13,8 +13,8 @@ export function MainNav({
     >
       <Link href="/admin" className="flex items-center space-x-2">
         <Image
-          src="/assets/images/logo@2x.png"
-          alt="Logo"
+          src="/assets/images/alogo.webp"
+          alt="NavHub"
           width={120}
           height={40}
           className="h-8 w-auto"

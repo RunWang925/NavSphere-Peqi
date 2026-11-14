@@ -1,8 +1,8 @@
 {
   "basic": {
-    "title": "佩奇既然有导航？",
-    "description": "收集国内外优秀设计网站、UI设计资源网站、灵感创意网站、素材资源网站，定时更新分享优质产品设计书签。",
-    "keywords": "设计导航,设计资源,设计工具,设计素材,设计教程"
+    "title": "NavHub",
+    "description": "NavHub — 收集国内外优秀网站、工具和资源，打造个人专属导航站。",
+    "keywords": "NavHub,导航,工具,资源,AI,开发,设计"
   },
   "appearance": {
     "logo": "/assets/images/alogo.webp",
@@ -19,6 +19,10 @@
       { "id": "bing", "name": "Bing", "url": "https://www.bing.com/search?q={q}", "icon": "https://favicon.im/www.bing.com?larger=true" },
       { "id": "site", "name": "站内", "url": "", "isSite": true }
     ],
-    "defaultEngineId": "baidu"
+    "defaultEngineId": "baidu",
+    "history": {
+      "enabled": true,
+      "maxCount": 5
+    }
   }
 }

@@ -16,12 +16,13 @@ const inter = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'NavSphere',
-    template: '%s - NavSphere'
+    default: 'NavHub',
+    template: '%s - NavHub'
   },
-  description: 'A modern navigation platform',
+  description: 'NavHub — 收集国内外优秀网站、工具和资源，打造个人专属导航站。',
   icons: {
-    icon: '/favicon.ico'
+    icon: '/assets/images/favicon.webp',
+    apple: '/assets/images/favicon.webp',
   }
 }
 

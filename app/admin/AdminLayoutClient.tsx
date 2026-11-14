@@ -95,12 +95,43 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const { setTheme } = useTheme()
   const [kvAvailable, setKvAvailable] = useState<boolean | null>(null)
+  const [platform, setPlatform] = useState<string>('unknown')
 
   useEffect(() => {
     fetch('/api/system/status').then(res => res.json()).then(data => {
       setKvAvailable(data.kvAvailable)
+      setPlatform(data.platform || 'unknown')
     }).catch(() => {})
   }, [])
+
+  const kvTips: Record<string, { title: string; desc: string }> = {
+    cloudflare: {
+      title: 'Cloudflare KV 存储未绑定',
+      desc: '请前往 Cloudflare Dashboard → Settings → Functions → KV namespace bindings，绑定变量名 NAV_KV 后重新部署'
+    },
+    local: {
+      title: '本地开发 — KV 存储未连接',
+      desc: '本地开发可使用 wrangler dev 模拟 KV，或创建 .env.local 配置 KV 连接。生产部署请绑定对应平台的存储服务'
+    },
+    docker: {
+      title: 'Docker 部署 — 存储未配置',
+      desc: '请检查 docker-compose.yml 中是否正确配置了存储卷或 KV 连接环境变量'
+    },
+    edgeone: {
+      title: '腾讯 EdgeOne — KV 存储未绑定',
+      desc: '请前往 EdgeOne 控制台 → 边缘函数 → KV 存储，创建并绑定 KV 命名空间'
+    },
+    vercel: {
+      title: 'Vercel — KV 存储未绑定',
+      desc: '请前往 Vercel Dashboard → Storage → KV，创建并绑定 KV 存储后重新部署'
+    },
+    unknown: {
+      title: '存储服务未绑定',
+      desc: '请根据您的部署平台绑定对应的 KV 存储服务。Cloudflare 用户请绑定变量名 NAV_KV'
+    }
+  }
+
+  const tip = kvTips[platform] || kvTips.unknown
 
   const toggleMenuItem = (href: string) => {
     setExpandedItems(prev =>
@@ -160,7 +191,7 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
                           {!isSidebarCollapsed && (
                             <div className="flex flex-col">
                               <span className="text-lg font-semibold leading-none tracking-tight">
-                                NavSphere
+                                NavHub
                               </span>
                               <span className="text-xs text-muted-foreground mt-1">
                                 管理控制台
@@ -339,15 +370,21 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
             </div>
             <main className="relative lg:pl-[80px] xl:pl-0 h-full">
               <div className="h-full overflow-auto">
-                <div className="p-6">
-                  {kvAvailable === false && (
-                    <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
-                      <p className="font-semibold">⚠️ KV 未绑定，所有修改不会生效</p>
-                      <p className="mt-1">
-                        请去 Cloudflare Dashboard → Settings → Functions → KV namespace bindings 绑定变量名 <code className="font-mono font-bold">NAV_KV</code> 后重新部署。
-                      </p>
+                {kvAvailable === false && (
+                  <div className="sticky top-0 z-50 bg-amber-500 text-amber-950 shadow-md">
+                    <div className="max-w-4xl mx-auto px-6 py-3 flex items-center gap-3">
+                      <span className="text-xl">⚠️</span>
+                      <div className="flex-1">
+                        <p className="font-bold text-sm">{tip.title} — 后台修改不会生效</p>
+                        <p className="text-xs mt-0.5 opacity-80">{tip.desc}</p>
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
+                <div className={cn(
+                  "p-6",
+                  kvAvailable === false && "grayscale opacity-40"
+                )}>
                   {children}
                 </div>
               </div>

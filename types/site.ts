@@ -6,6 +6,11 @@ export interface SearchEngine {
   isSite?: boolean
 }
 
+export interface SearchHistoryConfig {
+  enabled: boolean
+  maxCount: number
+}
+
 export interface SiteConfig {
   basic: {
     title: string
@@ -23,6 +28,7 @@ export interface SiteConfig {
   search?: {
     engines: SearchEngine[]
     defaultEngineId: string
+    history?: SearchHistoryConfig
   }
 }
 
@@ -43,5 +49,6 @@ export interface SiteInfo {
   search?: {
     engines: SearchEngine[]
     defaultEngineId: string
+    history?: SearchHistoryConfig
   }
 }

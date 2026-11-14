@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from "@/registry/new-york/ui/form"
 import { SiteConfigService} from "@/services/siteConfigService"
-import type { SiteConfig, SearchEngine } from "@/types/site"
+import type { SiteConfig, SearchEngine, SearchHistoryConfig } from "@/types/site"
 import { Toaster } from "@/registry/new-york/ui/toaster"
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { GripVertical, Lock } from 'lucide-react'
@@ -59,6 +59,7 @@ export default function SiteSettings() {
   const [searchEngines, setSearchEngines] = useState<SearchEngine[]>([])
   const [defaultEngineId, setDefaultEngineId] = useState('baidu')
   const [savingSearch, setSavingSearch] = useState(false)
+  const [historyConfig, setHistoryConfig] = useState<SearchHistoryConfig>({ enabled: true, maxCount: 5 })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -95,6 +96,9 @@ export default function SiteSettings() {
         }
         setSearchEngines(engines);
         setDefaultEngineId(defaultId);
+        if (config.search?.history) {
+          setHistoryConfig(config.search.history);
+        }
       }
     }
     loadConfig()
@@ -135,7 +139,7 @@ export default function SiteSettings() {
       const currentConfig = await siteConfigService.getSiteConfig();
       await siteConfigService.updateSiteConfig({
         ...currentConfig,
-        search: { engines: safeEngines, defaultEngineId: safeDefaultId }
+        search: { engines: safeEngines, defaultEngineId: safeDefaultId, history: historyConfig }
       });
       toast({ title: "成功", description: "搜索设置已保存" });
     } catch {
@@ -488,6 +492,41 @@ export default function SiteSettings() {
                           )}
                         </Droppable>
                       </DragDropContext>
+                    )}
+                  </div>
+
+                  <div className="space-y-3 pt-4 border-t">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>搜索历史记录</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          搜索框聚焦时显示历史搜索记录
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setHistoryConfig({ ...historyConfig, enabled: !historyConfig.enabled })}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${historyConfig.enabled ? 'bg-primary' : 'bg-muted'}`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${historyConfig.enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                    {historyConfig.enabled && (
+                      <div className="flex items-center gap-3 pl-1">
+                        <Label className="text-sm text-muted-foreground whitespace-nowrap">保留条数</Label>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={10}
+                          value={historyConfig.maxCount}
+                          onChange={(e) => {
+                            const v = Math.min(10, Math.max(1, parseInt(e.target.value) || 1))
+                            setHistoryConfig({ ...historyConfig, maxCount: v })
+                          }}
+                          className="w-20"
+                        />
+                        <span className="text-sm text-muted-foreground">条（1-10，默认5）</span>
+                      </div>
                     )}
                   </div>
 

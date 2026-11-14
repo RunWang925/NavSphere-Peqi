@@ -68,6 +68,7 @@ export function NavigationContent({ navigationData, siteData }: { navigationData
 
   const searchEngines = siteData.search?.engines || []
   const defaultEngineId = siteData.search?.defaultEngineId || 'baidu'
+  const historyConfig = siteData.search?.history
 
   return (
     <div className="flex flex-col sm:flex-row min-h-screen bg-background">
@@ -98,7 +99,7 @@ export function NavigationContent({ navigationData, siteData }: { navigationData
             </div>
 
             <div className="flex justify-center w-full"> 
-              <SearchBar onSearch={handleSearch} searchQuery={submittedQuery} engines={searchEngines} defaultEngineId={defaultEngineId} />
+              <SearchBar onSearch={handleSearch} searchQuery={submittedQuery} engines={searchEngines} defaultEngineId={defaultEngineId} historyConfig={historyConfig} />
             </div>
             
             <div className="flex items-center gap-1 justify-end">
