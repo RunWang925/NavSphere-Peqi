@@ -4,10 +4,21 @@
 
 ## 🚀 快速部署
 
+点击按钮一键部署到 Cloudflare Pages：
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/RunWang925/NavSphere-Peqi)
+
+<details>
+<summary>手动部署步骤（点不开一键部署时用这个）</summary>
+
 1. Fork 本仓库到你的 GitHub
 2. 进入 [Cloudflare Dashboard](https://dash.cloudflare.com) → Workers & Pages → 创建应用程序 → **Pages** → 连接到 Git → 选这个仓库
 3. 构建命令填 `npx @cloudflare/next-on-pages@1`，输出目录填 `.vercel/output/static`
-4. 部署完成后，在项目设置中配置以下内容：
+4. 部署完成后，在项目设置中配置 KV 和环境变量
+
+</details>
+
+部署后需要配置以下内容：
 
 **绑定 KV 命名空间**
 - 变量名：`NAV_KV`
