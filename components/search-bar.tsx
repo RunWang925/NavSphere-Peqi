@@ -53,11 +53,14 @@ export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, his
     return defaultEngineId
   })
 
-  const selectedEngine = engines.find(e => e.id === selectedEngineId) || engines[0]
-  const siteEngine = engines.find(e => e.isSite)
-  const complementEngine = selectedEngine?.isSite
-    ? (engines.find(e => !e.isSite) || engines[0])
-    : (siteEngine || engines[0])
+  const selectedEngine = React.useMemo(() => engines.find(e => e.id === selectedEngineId) || engines[0], [engines, selectedEngineId])
+  const siteEngine = React.useMemo(() => engines.find(e => e.isSite), [engines])
+  const complementEngine = React.useMemo(() =>
+    selectedEngine?.isSite
+      ? (engines.find(e => !e.isSite) || engines[0])
+      : (siteEngine || engines[0]),
+    [selectedEngine, siteEngine, engines]
+  )
 
   React.useEffect(() => {
     setInputValue(searchQuery)

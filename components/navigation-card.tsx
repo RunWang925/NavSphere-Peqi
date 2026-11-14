@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/registry/new-york/ui/card'
 import type { NavigationSubItem } from '@/types/navigation'
@@ -8,7 +8,6 @@ import type { SiteConfig } from '@/types/site'
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
@@ -18,7 +17,7 @@ interface NavigationCardProps {
   searchQuery?: string
 }
 
-export function NavigationCard({ item, siteConfig, searchQuery }: NavigationCardProps) {
+export const NavigationCard = memo(function NavigationCard({ item, siteConfig, searchQuery }: NavigationCardProps) {
   const [iconError, setIconError] = useState(false)
 
   const renderHighlightText = (text: string, query: string, isDescription = false) => {
@@ -53,51 +52,49 @@ export function NavigationCard({ item, siteConfig, searchQuery }: NavigationCard
   const linkTarget = siteConfig?.navigation?.linkTarget || '_blank'
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Card className="overflow-hidden transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg h-full">
-            <Link
-              href={item.href}
-              target={linkTarget}
-              rel="noopener noreferrer"
-              className="block h-full"
-            >
-              <CardHeader className="p-4 sm:p-5">
-                <div className="flex items-start gap-3">
-                  {item.icon && !iconError ? (
-                    <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-md overflow-hidden bg-muted flex items-center justify-center">
-                      <img
-                        src={item.icon}
-                        alt=""
-                        className="w-full h-full object-contain"
-                        onError={() => setIconError(true)}
-                      />
-                    </div>
-                  ) : item.icon ? (
-                    <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-md bg-muted/50 flex items-center justify-center text-[10px] text-muted-foreground">
-                      丢失
-                    </div>
-                  ) : null}
-                  <div className="space-y-1 min-w-0">
-                    <CardTitle className="text-sm sm:text-base truncate">
-                      {renderHighlightText(item.title, searchQuery || '')}
-                    </CardTitle>
-                    {item.description && (
-                      <CardDescription className="text-xs sm:text-sm line-clamp-1 italic">
-                        {renderHighlightText(item.description, searchQuery || '', true)}
-                      </CardDescription>
-                    )}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Card className="overflow-hidden transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg h-full">
+          <Link
+            href={item.href}
+            target={linkTarget}
+            rel="noopener noreferrer"
+            className="block h-full"
+          >
+            <CardHeader className="p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                {item.icon && !iconError ? (
+                  <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-md overflow-hidden bg-muted flex items-center justify-center">
+                    <img
+                      src={item.icon}
+                      alt=""
+                      className="w-full h-full object-contain"
+                      onError={() => setIconError(true)}
+                    />
                   </div>
+                ) : item.icon ? (
+                  <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-md bg-muted/50 flex items-center justify-center text-[10px] text-muted-foreground">
+                    丢失
+                  </div>
+                ) : null}
+                <div className="space-y-1 min-w-0">
+                  <CardTitle className="text-sm sm:text-base truncate">
+                    {renderHighlightText(item.title, searchQuery || '')}
+                  </CardTitle>
+                  {item.description && (
+                    <CardDescription className="text-xs sm:text-sm line-clamp-1 italic">
+                      {renderHighlightText(item.description, searchQuery || '', true)}
+                    </CardDescription>
+                  )}
                 </div>
-              </CardHeader>
-            </Link>
-          </Card>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[280px]">
-          <p>{item.description}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+              </div>
+            </CardHeader>
+          </Link>
+        </Card>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[280px]">
+        <p>{item.description}</p>
+      </TooltipContent>
+    </Tooltip>
   )
-}
+})

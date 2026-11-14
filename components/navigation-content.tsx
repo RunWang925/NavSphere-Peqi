@@ -11,6 +11,7 @@ import { Footer } from '@/components/footer'
 import { cn } from '@/lib/utils'
 import { Github, HelpCircle, Menu } from 'lucide-react'
 import { Button } from "@/registry/new-york/ui/button"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 function buildSearchUrl(engineUrl: string, query: string): string {
   const encoded = encodeURIComponent(query)
@@ -71,6 +72,7 @@ export function NavigationContent({ navigationData, siteData }: { navigationData
   const historyConfig = siteData.search?.history
 
   return (
+    <TooltipProvider delayDuration={300}>
     <div className="flex flex-col sm:flex-row min-h-screen bg-background">
       <div className="hidden sm:block">
         <Sidebar navigationData={navigationData} siteInfo={siteData} className="sticky top-0 h-screen" />
@@ -178,5 +180,6 @@ export function NavigationContent({ navigationData, siteData }: { navigationData
         <Footer siteInfo={siteData} />
       </main>
     </div>
+    </TooltipProvider>
   )
 }
