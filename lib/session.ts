@@ -47,9 +47,13 @@ function createFallbackSession(store: any): any {
 }
 
 export async function getSession(cookieStore?: any) {
-  const password = await getSecret()
   const store = cookieStore ?? (await cookies())
 
+  if (process.env.CF_PAGES !== '1') {
+    return createFallbackSession(store)
+  }
+
+  const password = await getSecret()
   try {
     const { getIronSession } = await import('iron-session')
     const session = await getIronSession<SessionData>(store, {
