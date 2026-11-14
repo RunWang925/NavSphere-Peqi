@@ -1,11 +1,10 @@
-import { getSession } from '@/lib/session'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getSessionFromRequest } from '@/lib/cookie-session'
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    const session = await getSession(request.cookies)
-
+    const session = getSessionFromRequest(request as unknown as Request)
     if (!session.isLoggedIn) {
       const callbackUrl = request.url
       return NextResponse.redirect(

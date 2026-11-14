@@ -1,7 +1,9 @@
-import { getSession } from '@/lib/session'
+import { headers } from 'next/headers'
+import { getSessionFromCookieHeader } from '@/lib/cookie-session'
 
 export async function auth() {
-  const session = await getSession()
+  const h = await headers()
+  const session = getSessionFromCookieHeader(h.get('cookie'))
   if (!session.isLoggedIn) return null
   return {
     user: {
