@@ -1,45 +1,103 @@
+import { NavigationContent } from '@/components/navigation-content'
+import { Metadata } from 'next/types'
+import { ScrollToTop } from '@/components/ScrollToTop'
+import { Container } from '@/components/ui/container'
+import type { SiteConfig } from '@/types/site'
+import type { NavigationData } from '@/types/navigation'
+import { getNavigationCached, getSiteCached } from '@/lib/kv'
+import navigationFallback from '@/navsphere/content/navigation.json'
+import siteFallback from '@/navsphere/content/site.json'
 
+export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export default async function HomePage() {
-  const results: string[] = []
+async function getData() {
+  let navigationData = await getNavigationCached()
+  if (!navigationData?.navigationItems || navigationData.navigationItems.length === 0) {
+    navigationData = navigationFallback as NavigationData
+  }
+  const siteDataRaw: any = (await getSiteCached()) || siteFallback
 
-  const tests: [string, () => Promise<any>][] = [
-    ['@/lib/kv', async () => { const m = await import('@/lib/kv'); return typeof m.getNavigationCached }],
-    ['@/components/ui/container', async () => { const m = await import('@/components/ui/container'); return typeof m.Container }],
-    ['@/components/ScrollToTop', async () => { const m = await import('@/components/ScrollToTop'); return typeof m.ScrollToTop }],
-    ['@/components/navigation-content', async () => { const m = await import('@/components/navigation-content'); return typeof m.NavigationContent }],
-    ['@/navsphere/content/navigation.json', async () => { const m = await import('@/navsphere/content/navigation.json'); return typeof m.default }],
-    ['@/navsphere/content/site.json', async () => { const m = await import('@/navsphere/content/site.json'); return typeof m.default }],
-    ['@/navsphere/content/navigation-default.json', async () => { const m = await import('@/navsphere/content/navigation-default.json'); return typeof m.default }],
-    ['@/navsphere/content/resource-metadata.json', async () => { const m = await import('@/navsphere/content/resource-metadata.json'); return typeof m.default }],
-  ]
-
-  for (const [name, test] of tests) {
-    try {
-      const r = await test()
-      results.push(`✅ ${name} (${r})`)
-    } catch (e: any) {
-      results.push(`❌ ${name}: ${e?.message || String(e)}`)
+  const siteData: SiteConfig = {
+    ...siteDataRaw,
+    search: siteDataRaw.search || siteFallback.search,
+    appearance: {
+      ...siteDataRaw.appearance,
+      theme: (siteDataRaw.appearance.theme === 'light' ||
+        siteDataRaw.appearance.theme === 'dark' ||
+        siteDataRaw.appearance.theme === 'system')
+        ? siteDataRaw.appearance.theme
+        : 'system'
+    },
+    navigation: {
+      linkTarget: (siteDataRaw.navigation?.linkTarget === '_blank' ||
+        siteDataRaw.navigation?.linkTarget === '_self')
+        ? siteDataRaw.navigation.linkTarget
+        : '_blank'
     }
   }
 
-  try {
-    const { getNavigationCached, getSiteCached } = await import('@/lib/kv')
-    const nav = await getNavigationCached()
-    results.push(`✅ getNavigationCached() returned: ${nav ? 'data' : 'null'}`)
-    const site = await getSiteCached()
-    results.push(`✅ getSiteCached() returned: ${site ? 'data' : 'null'}`)
-  } catch (e: any) {
-    results.push(`❌ KV call: ${e?.message || String(e)} | ${e?.stack || ''}`)
+  const filteredNavigationData = {
+    navigationItems: navigationData.navigationItems
+      .filter(category => (category as any).enabled !== false)
+      .map(category => {
+        const filteredSubCategories = category.subCategories
+          ? (category.subCategories as any[])
+              .filter(sub => sub.enabled !== false)
+              .map(sub => ({
+                ...sub,
+                items: sub.items?.filter((item: any) => item.enabled !== false)
+              }))
+          : undefined
+
+        return {
+          ...category,
+          items: category.items?.filter(item => item.enabled !== false),
+          subCategories: filteredSubCategories
+        }
+      })
   }
 
+  return {
+    navigationData: filteredNavigationData || { navigationItems: [] },
+    siteData: siteData || {
+      basic: {
+        title: 'NavSphere Peiqi',
+        description: '',
+        keywords: ''
+      },
+      appearance: {
+        logo: '',
+        favicon: '',
+        theme: 'system' as const
+      },
+      navigation: {
+        linkTarget: '_blank' as const
+      }
+    }
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { siteData } = await getData()
+
+  return {
+    title: siteData.basic.title,
+    description: siteData.basic.description,
+    keywords: siteData.basic.keywords,
+    icons: {
+      icon: siteData.appearance.favicon,
+    },
+  }
+}
+
+export default async function HomePage() {
+  const { navigationData, siteData } = await getData()
+
   return (
-    <div style={{ padding: 40, fontFamily: 'monospace', fontSize: 14, lineHeight: 2 }}>
-      <h2>Module Diagnostics</h2>
-      {results.map((r, i) => (
-        <div key={i} style={{ color: r.startsWith('❌') ? 'red' : 'green' }}>{r}</div>
-      ))}
-    </div>
+    <Container>
+      <NavigationContent navigationData={navigationData} siteData={siteData} />
+      <ScrollToTop />
+    </Container>
   )
 }
