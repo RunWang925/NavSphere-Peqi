@@ -40,6 +40,3 @@
 
 > 觉得有帮助的话，欢迎去 [原作者仓库](https://github.com/tianyaxiang/NavSphere) 点个 ⭐ Star
 
-## 📄 License
-
-同原项目 License
