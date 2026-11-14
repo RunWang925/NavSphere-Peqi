@@ -37,6 +37,7 @@ function saveHistory(items: string[]) {
 export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, historyConfig }: SearchBarProps) {
   const [inputValue, setInputValue] = React.useState(searchQuery)
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const containerRef = React.useRef<HTMLDivElement>(null)
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [iconError, setIconError] = React.useState(false)
   const [isFocused, setIsFocused] = React.useState(false)
@@ -44,6 +45,16 @@ export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, his
 
   const historyEnabled = historyConfig?.enabled ?? true
   const historyMaxCount = historyConfig?.maxCount ?? 5
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsFocused(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const [selectedEngineId, setSelectedEngineId] = React.useState(() => {
     if (typeof window !== 'undefined') {
@@ -154,7 +165,7 @@ export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, his
   const showHistory = historyEnabled && isFocused && inputValue === '' && history.length > 0 && !dropdownOpen
 
   return (
-    <div className="relative group/bar w-full max-w-2xl mx-auto">
+    <div ref={containerRef} className="relative group/bar w-full max-w-2xl mx-auto">
       <div className="flex items-center h-11 rounded-full bg-background border border-border/80 shadow-sm hover:shadow-md hover:border-border transition-all duration-200 overflow-hidden">
         {/* 引擎选择器 */}
         <button
@@ -186,7 +197,7 @@ export function SearchBar({ onSearch, searchQuery, engines, defaultEngineId, his
           placeholder={placeholder}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setTimeout(() => setIsFocused(false), 150)}
+          onBlur={() => {}}
           spellCheck={false}
           className="flex-1 h-full px-4 bg-transparent border-none outline-none text-sm placeholder:text-muted-foreground/50 min-w-0"
         />
