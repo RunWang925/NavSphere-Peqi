@@ -6,6 +6,7 @@ import resourceFallback from '@/navsphere/content/resource-metadata.json'
 
 const KV_KEY = 'navigation'
 const CACHE_TTL = 7 * 24 * 60 * 60
+const CACHE_VERSION = 'v2'
 
 export async function getEnv(): Promise<any | null> {
   if (process.env.CF_PAGES !== '1') return null
@@ -23,7 +24,7 @@ async function getFromCache(key: string): Promise<any | null> {
     if (!g.caches) return null
     const cache = g.caches.default
     if (!cache) return null
-    const response = await cache.match(`https://navsphere.local/${key}`)
+    const response = await cache.match(`https://navsphere.local/${CACHE_VERSION}/${key}`)
     if (response) {
       return await response.json()
     }
@@ -43,7 +44,7 @@ async function putToCache(key: string, data: any): Promise<void> {
         'Cache-Control': `max-age=${CACHE_TTL}`
       }
     })
-    await cache.put(`https://navsphere.local/${key}`, response)
+    await cache.put(`https://navsphere.local/${CACHE_VERSION}/${key}`, response)
   } catch {}
 }
 
@@ -53,8 +54,8 @@ export async function clearNavCache(): Promise<void> {
     if (!g.caches) return
     const cache = g.caches.default
     if (!cache) return
-    await cache.delete('https://navsphere.local/navigation')
-    await cache.delete('https://navsphere.local/site')
+    await cache.delete(`https://navsphere.local/${CACHE_VERSION}/navigation`)
+    await cache.delete(`https://navsphere.local/${CACHE_VERSION}/site`)
   } catch {}
 }
 
