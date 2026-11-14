@@ -40,3 +40,9 @@
 
 > 觉得有帮助的话，欢迎去 [原作者仓库](https://github.com/tianyaxiang/NavSphere) 点个 ⭐ Star
 
+## 📄 License
+
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+本项目基于 [NavSphere](https://github.com/tianyaxiang/NavSphere) 二次开发，遵循 MIT 开源协议。
+
